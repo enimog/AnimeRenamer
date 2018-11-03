@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="AnimeRenamer" />
+		<Option pch_mode="2" />
+		<Option compiler="clang" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/AnimeRenamer" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="clang" />
+				<Option parameters="/run/media/mog/Mog File Server/Downloads/[Erai-raws] Fairy Tail (2018) - 01 [1080p].mkv" />
+				<Compiler>
+					<Add option="-m64" />
+					<Add option="-g" />
+					<Add option="-Winvalid-pch" />
+					<Add option='-include &quot;stdafx.h&quot;' />
+					<Add option="-DCURL_STATICLIB" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+					<Add library="lib/Debug/liblog4cplusU-2.0.so.3.3.3" />
+					<Add directory="include" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/AnimeRenamer" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="clang" />
+				<Compiler>
+					<Add option="-O4" />
+					<Add option="-Winvalid-pch" />
+					<Add option='-include &quot;stdafx.h&quot;' />
+					<Add option="-DCURL_STATICLIB" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="lib/Release/liblog4cplusU-2.0.so.3.3.3" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-m64" />
+			<Add option="-Wall" />
+			<Add option="-g" />
+			<Add option="-std=c++14" />
+			<Add option="-Winvalid-pch" />
+			<Add option='-include &quot;stdafx.h&quot;' />
+			<Add option="-std=c++17" />
+			<Add option="-DCURL_STATICLIB" />
+			<Add directory="include" />
+			<Add directory="lib/include" />
+		</Compiler>
+		<Linker>
+			<Add option="-m64" />
+			<Add option="-lstdc++fs" />
+			<Add library="/lib64/libcurl.so" />
+			<Add library="/lib64/libpthread.so" />
+		</Linker>
+		<Unit filename="include/CObservable.h" />
+		<Unit filename="include/Configurator.h" />
+		<Unit filename="include/Constants.h" />
+		<Unit filename="include/File.h" />
+		<Unit filename="include/FileToolbox.h" />
+		<Unit filename="include/FileWatcherThread.h" />
+		<Unit filename="include/FileWriterThread.h" />
+		<Unit filename="include/INIFile.h" />
+		<Unit filename="include/Logger.h" />
+		<Unit filename="include/StringToolbox.h" />
+		<Unit filename="include/TheTvDb_Api.h" />
+		<Unit filename="include/curlpp/Easy.hpp" />
+		<Unit filename="include/curlpp/Easy.inl" />
+		<Unit filename="include/curlpp/Exception.hpp" />
+		<Unit filename="include/curlpp/Form.hpp" />
+		<Unit filename="include/curlpp/Info.hpp" />
+		<Unit filename="include/curlpp/Info.inl" />
+		<Unit filename="include/curlpp/Infos.hpp" />
+		<Unit filename="include/curlpp/Multi.hpp" />
+		<Unit filename="include/curlpp/Option.hpp" />
+		<Unit filename="include/curlpp/Option.inl" />
+		<Unit filename="include/curlpp/OptionBase.hpp" />
+		<Unit filename="include/curlpp/Options.hpp" />
+		<Unit filename="include/curlpp/Types.hpp" />
+		<Unit filename="include/curlpp/cURLpp.hpp" />
+		<Unit filename="include/curlpp/internal/CurlHandle.hpp" />
+		<Unit filename="include/curlpp/internal/OptionContainer.hpp" />
+		<Unit filename="include/curlpp/internal/OptionContainerType.hpp" />
+		<Unit filename="include/curlpp/internal/OptionList.hpp" />
+		<Unit filename="include/curlpp/internal/OptionSetter.hpp" />
+		<Unit filename="include/curlpp/internal/SList.hpp" />
+		<Unit filename="include/nlohmann/json.hpp" />
+		<Unit filename="include/stdafx.h">
+			<Option compile="1" />
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="include/utilspp/EmptyType.hpp" />
+		<Unit filename="include/utilspp/NonCopyable.hpp" />
+		<Unit filename="include/utilspp/NullType.hpp" />
+		<Unit filename="include/utilspp/SmartPtr.hpp" />
+		<Unit filename="include/utilspp/ThreadingFactoryMutex.hpp" />
+		<Unit filename="include/utilspp/ThreadingSingle.hpp" />
+		<Unit filename="include/utilspp/TypeList.hpp" />
+		<Unit filename="include/utilspp/TypeTrait.hpp" />
+		<Unit filename="include/utilspp/clone_ptr.hpp" />
+		<Unit filename="include/whereami/whereami.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="src/CObservable.cpp" />
+		<Unit filename="src/Configurator.cpp" />
+		<Unit filename="src/File.cpp" />
+		<Unit filename="src/FileToolbox.cpp" />
+		<Unit filename="src/FileWatcherThread.cpp" />
+		<Unit filename="src/FileWriterThread.cpp" />
+		<Unit filename="src/INIFile.cpp" />
+		<Unit filename="src/Logger.cpp" />
+		<Unit filename="src/StringToolbox.cpp" />
+		<Unit filename="src/TheTvDb_Api.cpp" />
+		<Unit filename="src/curlpp/Easy.cpp" />
+		<Unit filename="src/curlpp/Exception.cpp" />
+		<Unit filename="src/curlpp/Form.cpp" />
+		<Unit filename="src/curlpp/Info.cpp" />
+		<Unit filename="src/curlpp/Multi.cpp" />
+		<Unit filename="src/curlpp/OptionBase.cpp" />
+		<Unit filename="src/curlpp/Options.cpp" />
+		<Unit filename="src/curlpp/cURLpp.cpp" />
+		<Unit filename="src/curlpp/internal/CurlHandle.cpp" />
+		<Unit filename="src/curlpp/internal/OptionList.cpp" />
+		<Unit filename="src/curlpp/internal/OptionSetter.cpp" />
+		<Unit filename="src/curlpp/internal/SList.cpp" />
+		<Unit filename="src/whereami/whereami.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
