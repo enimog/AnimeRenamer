@@ -2,7 +2,7 @@
 #include "Serie.h"
 #include "TheTvDb_Api.h"
 
-Serie::Serie(std::string const& serie_name) : m_serieId(0)
+Serie::Serie(std::string const& serie_name, size_t season) : m_serieId(0)
 {
     const auto serie_candidates = thetvdb_api::getSerieNameBestMatch(serie_name);
 
@@ -13,7 +13,13 @@ Serie::Serie(std::string const& serie_name) : m_serieId(0)
         // m_serieId equal 0 if the serie id was not found
         if (m_serieId != 0)
         {
-            const auto episode_list = thetvdb_api::getEpisodes(m_serieId);
+            // If we absolutely want a season and it is not found, I return an empty episode list
+            const auto episode_list = thetvdb_api::getEpisodes(m_serieId, season);
+
+            if (episode_list.size() == 0)
+            {
+                continue;
+            }
 
             for (auto const& episode : episode_list)
             {
@@ -24,7 +30,7 @@ Serie::Serie(std::string const& serie_name) : m_serieId(0)
 
                 m_mapSeason.find(episode.getAiredSeason())->second.push_back(episode);
             }
-            m_name = candidate;
+            m_name = Toolbox::StringToolbox::trim(candidate);
 
             break;
         }

@@ -16,7 +16,9 @@ public:
         THETVDB_USERKEY,
 
         // Filesystem informations
-        PATH_TO_COPY_ROOT
+        PATH_TO_COPY_ROOT,
+        EXCLUDED_FOLDERS,
+        SEASON_DICT_LOCATION
 
     };
 

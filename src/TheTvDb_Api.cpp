@@ -2,7 +2,6 @@
 #include "TheTvDb_Api.h"
 
 #include <sstream>
-#include <regex>
 
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
@@ -119,7 +118,7 @@ namespace thetvdb_api
         return 0;
     }
 
-    std::vector<Episode> getEpisodes(size_t id)
+    std::vector<Episode> getEpisodes(size_t id, size_t season)
     {
         std::vector<Episode> returnValue;
         size_t page = 0;
@@ -137,7 +136,10 @@ namespace thetvdb_api
 
             for (const auto& episode : json_data["data"])
             {
-                returnValue.push_back(Episode(episode));
+                if (season == INFINITE || season == episode["airedSeason"])
+                {
+                    returnValue.push_back(Episode(episode));
+                }
             }
         }
         // The api return episodes by slices of 100, and I want to get all of them

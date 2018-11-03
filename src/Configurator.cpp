@@ -2,13 +2,13 @@
 #include "Configurator.h"
 #include "FileToolbox.h"
 
-static bool b_IsInitialized = false;
-
 const std::unordered_map<CConfigurator::ConfigOption, std::wstring> CConfigurator::OptionToString = {
     { THETVDB_API_KEY , L"ApiKey" },
     { THETVDB_USERNAME, L"Username" },
     { THETVDB_USERKEY ,  L"Userkey" },
-    { PATH_TO_COPY_ROOT , L"PathToCopyRoot" }
+    { PATH_TO_COPY_ROOT , L"PathToCopyRoot" },
+    { EXCLUDED_FOLDERS , L"ExcludedFolders" },
+    { SEASON_DICT_LOCATION , L"seasonDictLocation" }
 };
 
 CConfigurator::CConfigurator() : Config( L"config.ini" )
@@ -23,11 +23,7 @@ CConfigurator::CConfigurator() : Config( L"config.ini" )
         LOG_INFO( "Using the default configuration" );
         UseDefaultConfiguration();
     }*/
-    if (!b_IsInitialized)
-    {
-        UseDefaultConfiguration();
-        b_IsInitialized = true;
-    }
+    UseDefaultConfiguration();
 }
 
 
@@ -44,6 +40,8 @@ void CConfigurator::UseDefaultConfiguration() const
     const auto username = (*this)[THETVDB_USERNAME];
     const auto userkey = (*this)[THETVDB_USERKEY];
     const auto copypath = (*this)[PATH_TO_COPY_ROOT];
+    const auto excludedFolders = (*this)[EXCLUDED_FOLDERS];
+    const auto dictLocation = (*this)[SEASON_DICT_LOCATION];
 
     // Clear the configuration if it existed
     Config.clear();
@@ -57,6 +55,8 @@ void CConfigurator::UseDefaultConfiguration() const
 
     Config.AppendSection( L"General" );
     Config.AppendKeyValue( L"PathToCopyRoot", copypath );
+    Config.AppendKeyValue( L"ExcludedFolders", excludedFolders );
+    Config.AppendKeyValue( L"seasonDictLocation", dictLocation );
 
     LOG_TRACE( "End creating the default configuration" );
 }

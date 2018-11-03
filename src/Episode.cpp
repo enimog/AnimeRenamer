@@ -6,8 +6,6 @@ Episode::Episode(nlohmann::json const& data)
     m_EpisodeId = data["id"];
     m_airedSeason = data["airedSeason"];
     m_airedEpisodeNumber = data["airedEpisodeNumber"];
-    //m_absoluteNumber = data["absoluteNumber"];
-    m_airedSeasonId = data["airedSeasonID"];
     m_episodeName = data["episodeName"];
 }
 

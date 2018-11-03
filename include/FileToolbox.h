@@ -2,31 +2,27 @@
 
 namespace Toolbox
 {
-    class FileToolbox
+    namespace FileToolbox
     {
-    public:
-        FileToolbox() = delete;
-        ~FileToolbox() = delete;
+        std::wstring ToAbsolutePath( std::wstring const& path );
 
-        static std::wstring ToAbsolutePath( std::wstring const& path );
+        std::wstring GetExtension( std::wstring const& file );
 
-        static std::wstring GetExtension( std::wstring const& file );
+        std::wstring SetExtension( std::wstring const& file, std::wstring const& ext = L"txt" );
 
-        static std::wstring SetExtension( std::wstring const& file, std::wstring const& ext = L"txt" );
+        void Write( std::wstring const& file, std::vector<std::wstring> content, bool append = false );
 
-        static void Write( std::wstring const& file, std::vector<std::wstring> content, bool append = false );
+        std::vector<std::wstring> Read( std::wstring const & file );
 
-        static std::vector<std::wstring> Read( std::wstring const & file );
+        bool IsRoot(std::wstring const& path );
 
-        static bool IsRoot(std::wstring const& path );
+        std::wstring GetCurrentPath();
 
-        static std::wstring GetCurrentPath();
+        std::wstring GetFileName(std::wstring const& path);
 
-        static std::wstring GetFileName(std::wstring const& path);
+        std::wstring GetFolder( std::wstring const& path );
 
-        static std::wstring GetFolder( std::wstring const& path );
-
-        static bool Exists( std::wstring const& path );
+        bool Exists( std::wstring const& path );
     };
 }
 

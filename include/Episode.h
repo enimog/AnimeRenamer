@@ -20,7 +20,5 @@ private:
     size_t m_EpisodeId;
     size_t m_airedSeason;
     size_t m_airedEpisodeNumber;
-    size_t m_absoluteNumber;
-    size_t m_airedSeasonId;
     std::string m_episodeName;
 };

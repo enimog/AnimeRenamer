@@ -10,6 +10,6 @@ namespace thetvdb_api
 
     size_t getSerieId(std::string const& name);
 
-    std::vector<Episode> getEpisodes(size_t id);
+    std::vector<Episode> getEpisodes(size_t id, size_t season);
 };
 

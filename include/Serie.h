@@ -9,7 +9,7 @@ public:
      * Serie class
      * This class represent a TV serie
      */
-    Serie(std::string const& serie_name);
+    Serie(std::string const& serie_name, size_t season);
     ~Serie();
 
     /*

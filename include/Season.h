@@ -20,6 +20,8 @@ public:
 
     void push_back(Episode episode);
 
+    size_t getSeasonId() const;
+
 private:
 
     /*
