@@ -10,6 +10,8 @@ namespace Toolbox
 
         static std::wstring ToAbsolutePath( std::wstring const& path );
 
+        static std::wstring GetExtension( std::wstring const& file );
+
         static std::wstring SetExtension( std::wstring const& file, std::wstring const& ext = L"txt" );
 
         static void Write( std::wstring const& file, std::vector<std::wstring> content, bool append = false );

@@ -13,7 +13,10 @@ public:
         // TVDB authentication
         THETVDB_API_KEY,
         THETVDB_USERNAME,
-        THETVDB_USERKEY
+        THETVDB_USERKEY,
+
+        // Filesystem informations
+        PATH_TO_COPY_ROOT
 
     };
 

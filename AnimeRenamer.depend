@@ -208,7 +208,7 @@
 1510471394 /media/mog_network/Dev/AnimeRenamer/include/CObservable.h
 	<functional>
 
-1541209308 source:/media/mog_network/Dev/AnimeRenamer/src/File.cpp
+1541234383 source:/media/mog_network/Dev/AnimeRenamer/src/File.cpp
 	"stdafx.h"
 	"File.h"
 	"FileToolbox.h"
@@ -230,7 +230,7 @@
 	<condition_variable>
 	<mutex>
 
-1541138880 /media/mog_network/Dev/AnimeRenamer/include/FileToolbox.h
+1541229338 /media/mog_network/Dev/AnimeRenamer/include/FileToolbox.h
 
 1541145656 source:/media/mog_network/Dev/AnimeRenamer/src/FileWriterThread.cpp
 	"stdafx.h"
@@ -274,15 +274,15 @@
 	<log4cplus/config.hxx>
 	<cstddef>
 
-1541139308 source:/media/mog_network/Dev/AnimeRenamer/src/INIFile.cpp
+1541234180 source:/media/mog_network/Dev/AnimeRenamer/src/INIFile.cpp
 	"stdafx.h"
 	"INIFile.h"
 	"FileToolbox.h"
 
-1510435989 /media/mog_network/Dev/AnimeRenamer/include/INIFile.h
+1541233557 /media/mog_network/Dev/AnimeRenamer/include/INIFile.h
 	"File.h"
 
-1541211840 source:/media/mog_network/Dev/AnimeRenamer/src/FileToolbox.cpp
+1541230037 source:/media/mog_network/Dev/AnimeRenamer/src/FileToolbox.cpp
 	"stdafx.h"
 	"FileToolbox.h"
 	<fstream>
@@ -410,14 +410,15 @@
 	<map>
 	<vector>
 
-1509898606 /media/mog_network/Dev/AnimeRenamer/include/Constants.h
+1541234888 /media/mog_network/Dev/AnimeRenamer/include/Constants.h
 	"stdafx.h"
+	"Configurator.h"
 
-1541141173 /media/mog_network/Dev/AnimeRenamer/include/Configurator.h
+1541232256 /media/mog_network/Dev/AnimeRenamer/include/Configurator.h
 	"INIFile.h"
 	<unordered_map>
 
-1541141641 source:/media/mog_network/Dev/AnimeRenamer/src/Configurator.cpp
+1541234687 source:/media/mog_network/Dev/AnimeRenamer/src/Configurator.cpp
 	"stdafx.h"
 	"Configurator.h"
 	"FileToolbox.h"
@@ -563,24 +564,26 @@
 	<vector>
 	<utility>
 
-1541181540 /media/mog_network/Dev/AnimeRenamer/include/TheTvDb_Api.h
-	<nlohmann/json.hpp>
+1541223373 /media/mog_network/Dev/AnimeRenamer/include/TheTvDb_Api.h
 
-1541211946 source:/media/mog_network/Dev/AnimeRenamer/src/TheTvDb_Api.cpp
+1541231094 source:/media/mog_network/Dev/AnimeRenamer/src/TheTvDb_Api.cpp
 	"stdafx.h"
 	"TheTvDb_Api.h"
+	<sstream>
+	<regex>
 	<curlpp/cURLpp.hpp>
 	<curlpp/Easy.hpp>
 	<curlpp/Options.hpp>
 	<curlpp/Exception.hpp>
 	<curlpp/Infos.hpp>
+	<nlohmann/json.hpp>
 	"Configurator.h"
-	<sstream>
-	<regex>
+	"MathUtils.h"
+	"Episode.h"
 
-1541209973 /media/mog_network/Dev/AnimeRenamer/include/whereami/whereami.h
+1541216352 /media/mog_network/Dev/AnimeRenamer/include/whereami/whereami.h
 
-1541211479 source:/media/mog_network/Dev/AnimeRenamer/src/whereami/whereami.cpp
+1541216418 source:/media/mog_network/Dev/AnimeRenamer/src/whereami/whereami.cpp
 	<whereami/whereami.h>
 	<stdlib.h>
 	<windows.h>
@@ -610,4 +613,38 @@
 	<sys/types.h>
 	<sys/sysctl.h>
 	<dlfcn.h>
+
+1541234587 source:/media/mog_network/Dev/AnimeRenamer/src/main.cpp
+	<iostream>
+	<string>
+	<filesystem>
+	<regex>
+	"Serie.h"
+	"TheTvDb_Api.h"
+	"FileToolbox.h"
+	"Configurator.h"
+
+1541231197 source:/media/mog_network/Dev/AnimeRenamer/src/Episode.cpp
+	"stdafx.h"
+	"Episode.h"
+
+1541229286 /media/mog_network/Dev/AnimeRenamer/include/Episode.h
+	<nlohmann/json.hpp>
+
+1541228211 source:/media/mog_network/Dev/AnimeRenamer/src/Season.cpp
+	"stdafx.h"
+	"Season.h"
+
+1541228219 /media/mog_network/Dev/AnimeRenamer/include/Season.h
+	"Episode.h"
+
+1541234799 source:/media/mog_network/Dev/AnimeRenamer/src/Serie.cpp
+	"stdafx.h"
+	"Serie.h"
+	"TheTvDb_Api.h"
+
+1541229220 /media/mog_network/Dev/AnimeRenamer/include/Serie.h
+	"Season.h"
+
+1541223085 /media/mog_network/Dev/AnimeRenamer/include/MathUtils.h
 

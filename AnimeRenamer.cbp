@@ -63,12 +63,16 @@
 		<Unit filename="include/CObservable.h" />
 		<Unit filename="include/Configurator.h" />
 		<Unit filename="include/Constants.h" />
+		<Unit filename="include/Episode.h" />
 		<Unit filename="include/File.h" />
 		<Unit filename="include/FileToolbox.h" />
 		<Unit filename="include/FileWatcherThread.h" />
 		<Unit filename="include/FileWriterThread.h" />
 		<Unit filename="include/INIFile.h" />
 		<Unit filename="include/Logger.h" />
+		<Unit filename="include/MathUtils.h" />
+		<Unit filename="include/Season.h" />
+		<Unit filename="include/Serie.h" />
 		<Unit filename="include/StringToolbox.h" />
 		<Unit filename="include/TheTvDb_Api.h" />
 		<Unit filename="include/curlpp/Easy.hpp" />
@@ -106,15 +110,17 @@
 		<Unit filename="include/utilspp/TypeTrait.hpp" />
 		<Unit filename="include/utilspp/clone_ptr.hpp" />
 		<Unit filename="include/whereami/whereami.h" />
-		<Unit filename="main.cpp" />
 		<Unit filename="src/CObservable.cpp" />
 		<Unit filename="src/Configurator.cpp" />
+		<Unit filename="src/Episode.cpp" />
 		<Unit filename="src/File.cpp" />
 		<Unit filename="src/FileToolbox.cpp" />
 		<Unit filename="src/FileWatcherThread.cpp" />
 		<Unit filename="src/FileWriterThread.cpp" />
 		<Unit filename="src/INIFile.cpp" />
 		<Unit filename="src/Logger.cpp" />
+		<Unit filename="src/Season.cpp" />
+		<Unit filename="src/Serie.cpp" />
 		<Unit filename="src/StringToolbox.cpp" />
 		<Unit filename="src/TheTvDb_Api.cpp" />
 		<Unit filename="src/curlpp/Easy.cpp" />
@@ -129,9 +135,8 @@
 		<Unit filename="src/curlpp/internal/OptionList.cpp" />
 		<Unit filename="src/curlpp/internal/OptionSetter.cpp" />
 		<Unit filename="src/curlpp/internal/SList.cpp" />
-		<Unit filename="src/whereami/whereami.c">
-			<Option compilerVar="CC" />
-		</Unit>
+		<Unit filename="src/main.cpp" />
+		<Unit filename="src/whereami/whereami.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -54,6 +54,11 @@ std::wstring Toolbox::FileToolbox::ToAbsolutePath( std::wstring const & path )
     return result;
 }
 
+std::wstring Toolbox::FileToolbox::GetExtension( std::wstring const& file )
+{
+    return Toolbox::StringToolbox::StringToWide(std::filesystem::path(file).extension());
+}
+
 std::wstring Toolbox::FileToolbox::SetExtension( std::wstring const & path, std::wstring const & ext )
 {
     std::wstring result;

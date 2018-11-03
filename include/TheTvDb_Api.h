@@ -1,47 +1,15 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
+class Episode;
 
-struct TheTvDb_Api_SeriesSearchResult
+namespace thetvdb_api
 {
-    std::vector<std::string> aliases;
-    std::string banner;
-    std::string firstAired;
-    int id;
-    std::string network;
-    std::string overview;
-    std::string seriesName;
-    std::string slug;
-    std::string status;
-};
+    bool login();
 
-class TheTvDb_Api
-{
-public:
-    /*
-     * TheTvDb_Api class
-     * This class allow for calling methods from the TVDB api.
-     */
-    TheTvDb_Api();
-    ~TheTvDb_Api();
+    std::vector<std::string> getSerieNameBestMatch(std::string const& name);
 
-    TheTvDb_Api_SeriesSearchResult SearchForSerie(std::string name);
+    size_t getSerieId(std::string const& name);
 
-protected:
-    /*
-     * Try to login to the api and get the connexion token
-     *
-     * @return : true if successfull, else otherwise
-     */
-    bool TryLogin();
-
-private:
-    nlohmann::json POST_request(nlohmann::json input, std::string const& link);
-    nlohmann::json GET_request(std::string const& link);
-
-    /*
-     * Api token obtained when logging to the api using the information from the config file
-     */
-    std::string m_token;
+    std::vector<Episode> getEpisodes(size_t id);
 };
 
