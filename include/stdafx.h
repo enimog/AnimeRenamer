@@ -8,6 +8,8 @@
 #define UNICODE
 #define _UNICODE
 
+#define _DEBUG
+
 #include <iostream>
 
 // windows stuff

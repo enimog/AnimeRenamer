@@ -27,6 +27,6 @@ private:
     /*
      * Vector containing all seasons of the serie
      */
-    std::vector<Episode> m_vectorEpisode;
+    std::map<size_t, Episode> m_vectorEpisode;
     size_t m_SeasonId;
 };

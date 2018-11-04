@@ -177,7 +177,7 @@
 	<locale>
 	<codecvt>
 
-1541262994 /media/mog_network/Dev/AnimeRenamer/include/stdafx.h
+1541285331 /media/mog_network/Dev/AnimeRenamer/include/stdafx.h
 	<iostream>
 	<SDKDDKVer.h>
 	<windows.h>
@@ -192,7 +192,7 @@
 	"StringToolbox.h"
 	"Logger.h"
 
-1541190964 /media/mog_network/Dev/AnimeRenamer/include/StringToolbox.h
+1541358417 /media/mog_network/Dev/AnimeRenamer/include/StringToolbox.h
 	<memory>
 	<vector>
 	<algorithm>
@@ -564,12 +564,15 @@
 	<vector>
 	<utility>
 
-1541281442 /media/mog_network/Dev/AnimeRenamer/include/TheTvDb_Api.h
+1541326719 /media/mog_network/Dev/AnimeRenamer/include/TheTvDb_Api.h
+	<map>
 
-1541282206 source:/media/mog_network/Dev/AnimeRenamer/src/TheTvDb_Api.cpp
+1541361401 source:/media/mog_network/Dev/AnimeRenamer/src/TheTvDb_Api.cpp
 	"stdafx.h"
 	"TheTvDb_Api.h"
 	<sstream>
+	<regex>
+	<filesystem>
 	<curlpp/cURLpp.hpp>
 	<curlpp/Easy.hpp>
 	<curlpp/Options.hpp>
@@ -613,7 +616,7 @@
 	<sys/sysctl.h>
 	<dlfcn.h>
 
-1541281560 source:/media/mog_network/Dev/AnimeRenamer/src/main.cpp
+1541363948 source:/media/mog_network/Dev/AnimeRenamer/src/main.cpp
 	<iostream>
 	<string>
 	<filesystem>
@@ -623,26 +626,26 @@
 	"FileToolbox.h"
 	"Constants.h"
 
-1541282255 source:/media/mog_network/Dev/AnimeRenamer/src/Episode.cpp
+1541327150 source:/media/mog_network/Dev/AnimeRenamer/src/Episode.cpp
 	"stdafx.h"
 	"Episode.h"
 
 1541282272 /media/mog_network/Dev/AnimeRenamer/include/Episode.h
 	<nlohmann/json.hpp>
 
-1541282433 source:/media/mog_network/Dev/AnimeRenamer/src/Season.cpp
+1541364263 source:/media/mog_network/Dev/AnimeRenamer/src/Season.cpp
 	"stdafx.h"
 	"Season.h"
 
-1541282418 /media/mog_network/Dev/AnimeRenamer/include/Season.h
+1541364105 /media/mog_network/Dev/AnimeRenamer/include/Season.h
 	"Episode.h"
 
-1541281405 source:/media/mog_network/Dev/AnimeRenamer/src/Serie.cpp
+1541359218 source:/media/mog_network/Dev/AnimeRenamer/src/Serie.cpp
 	"stdafx.h"
 	"Serie.h"
 	"TheTvDb_Api.h"
 
-1541281313 /media/mog_network/Dev/AnimeRenamer/include/Serie.h
+1541321209 /media/mog_network/Dev/AnimeRenamer/include/Serie.h
 	"Season.h"
 
 1541223085 /media/mog_network/Dev/AnimeRenamer/include/MathUtils.h

@@ -13,12 +13,19 @@ Season::~Season()
 
 std::vector<Episode> Season::getEpisodes() const
 {
-    return m_vectorEpisode;
+    std::vector<Episode> list_episode;
+
+    for (auto const& [key, episode] : m_vectorEpisode)
+    {
+        list_episode.push_back(episode);
+    }
+
+    return list_episode;
 }
 
 void Season::push_back(Episode episode)
 {
-    return m_vectorEpisode.push_back(episode);
+    m_vectorEpisode.insert(std::pair<size_t, Episode>(episode.getAiredEpisodeNumber(), episode));
 }
 
 size_t Season::getSeasonId() const

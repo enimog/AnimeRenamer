@@ -2,6 +2,8 @@
 #include "TheTvDb_Api.h"
 
 #include <sstream>
+#include <regex>
+#include <filesystem>
 
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
@@ -22,6 +24,7 @@ namespace thetvdb_api
     static const std::string THETVDB_API_LINK =  "https://api.thetvdb.com";
     static const std::vector<std::string> LANGUAGES_TO_TEST = { "en", "fr" };
     static std::string token;
+    static const size_t SMALLEST_DISTANCE_ACCEPTABLE = 5;
 
     nlohmann::json POST_request(nlohmann::json input, std::string const& link);
     nlohmann::json GET_request(std::string const& link);
@@ -57,51 +60,118 @@ namespace thetvdb_api
         return false;
     }
 
-    std::vector<std::string> getSerieNameBestMatch(std::string const& name)
+    // Internal function
+    // Used to get a EN translated name for the serie
+    // This use AniDB data dump internally
+    std::multimap<int, std::string> getTranslationEquivalent(std::string const& name)
     {
-        std::vector<std::string> result;
+        std::multimap<int, std::string> result;
+        curlpp::Cleanup cleaner;
+        curlpp::Easy request;
+        std::stringstream ss;
 
-        try
+        // The AniDB url need spaces to be serialized as '+' instead of '%20'
+        auto encoded_name = curlpp::escape(name);
+        std::regex encodedspaces("\\%20?");
+        encoded_name = regex_replace(encoded_name, encodedspaces,"+");
+
+        request.setOpt(new curlpp::options::Url("http://anisearch.outrance.pl/?task=search&query="+encoded_name));
+        ss << request;
+
+        // Parse all the xml dump to find matching entries
+        std::string xml_data(ss.str());
+        while (xml_data.find("<anime") != std::string::npos)
         {
-            curlpp::Cleanup cleaner;
-            curlpp::Easy request;
-            request.setOpt(new curlpp::options::Url("https://www.thetvdb.com/search?q="+curlpp::escape(name)));
+            bool found_candidate = false;
+            const auto begin = xml_data.find("<anime");
+            const auto end = xml_data.find("</anime>");
+            auto anime = xml_data.substr(begin, end - begin);
+            size_t smallest_distance = INFINITE;
 
-            std::stringstream ss;
-            ss << request;
-
-            std::string line;
-            size_t distance = INFINITE;
-            while (std::getline(ss, line))
+            while (anime.find("<title") != std::string::npos)
             {
-                line = trim(line);
+                const auto begin = anime.find("<title");
+                const auto end = anime.find("</title>");
+                const auto entry = anime.substr(begin, end - begin);
+                const auto begin_name = entry.find("[CDATA[") + 7;
+                const auto end_name = entry.find("]]>");
+                const auto entry_name = entry.substr(begin_name, end_name - begin_name);
 
-                // The real name used by thetvdb query is inside the <a href>{...}</a> tag
-                if (line.find("href=\"/series/") != std::string::npos)
+                const auto distance = LevenshteinDistance(name, entry_name);
+                if (SMALLEST_DISTANCE_ACCEPTABLE >= distance && distance < smallest_distance)
                 {
-                    const auto begin = line.find("\">") + 2;
-                    const auto end = line.find("</a>");
-                    const auto candidate = line.substr(begin, end - begin);
-                    const auto candidate_distance = LevenshteinDistance(name, candidate);
-                    if (distance > candidate_distance)
-                    {
-                        distance = candidate_distance;
-                        result.push_back(candidate);
-                    }
+                    found_candidate = true;
+                    smallest_distance = distance;
                 }
+
+                if (found_candidate && entry.find("type=\"official\"") != std::string::npos && entry.find("lang=\"en\"") != std::string::npos)
+                {
+                    result.insert(std::pair<int, std::string>(smallest_distance, entry_name));
+                }
+
+                anime = anime.substr(end + 8);
+            }
+            xml_data = xml_data.substr(end + 8);
+        }
+
+        return result;
+    }
+
+    // Internal function
+    // Used to find existing folders on the root path, and use them if possible
+    // This FIX the issue where seasons would have their own names and not use the general folder
+    std::multimap<int, std::string> getExistingFoldersBestMatch(std::string const& name)
+    {
+        std::multimap<int, std::string> result;
+
+        const auto rootPath = WideToString(config[CConfigurator::PATH_TO_COPY_ROOT]);
+
+        for (auto const& directory : std::filesystem::directory_iterator(rootPath))
+        {
+            auto candidate = directory.path().filename().string();
+
+            // In case there are (xxxx) specifying the year, I have to remove them for the search
+            std::regex parenthesisContent("\\(([[:digit:]])+\\)?");
+            std::regex_replace(candidate, parenthesisContent,"");
+            candidate = trim(candidate);
+
+            const auto candidate_distance = LevenshteinDistance(name, candidate);
+            if (SMALLEST_DISTANCE_ACCEPTABLE >= candidate_distance || lowercase(name).find(lowercase(candidate)) != std::string::npos)
+            {
+                result.insert(std::pair<int, std::string>(-1, candidate));
             }
         }
-        catch ( curlpp::LogicError & e )
+
+        return result;
+    }
+
+    std::multimap<int, std::string> getSerieNameBestMatch(std::string const& name)
+    {
+        std::multimap<int, std::string> result;
+        curlpp::Cleanup cleaner;
+        curlpp::Easy request;
+        request.setOpt(new curlpp::options::Url("https://www.thetvdb.com/search?q="+curlpp::escape(name)));
+
+        std::stringstream ss;
+        ss << request;
+
+        std::string line;
+        while (std::getline(ss, line))
         {
-            LOG_ERROR(e.what());
-        }
-        catch ( curlpp::RuntimeError & e )
-        {
-            LOG_ERROR(e.what());
+            line = trim(line);
+
+            // The real name used by thetvdb query is inside the <a href>{...}</a> tag
+            if (line.find("href=\"/series/") != std::string::npos)
+            {
+                const auto begin = line.find("\">") + 2;
+                const auto end = line.find("</a>");
+                const auto candidate = line.substr(begin, end - begin);
+                result.insert(std::pair<int, std::string>(LevenshteinDistance(name, candidate), candidate));
+            }
         }
 
-        // I want to order names by order of the best match to the worst
-        std::reverse(result.begin(), result.end());
+        result.merge(getTranslationEquivalent(name));
+        result.merge(getExistingFoldersBestMatch(name));
 
         return result;
     }
@@ -122,6 +192,7 @@ namespace thetvdb_api
     {
         std::vector<Episode> returnValue;
         size_t page = 0;
+        bool bEpisodeFound = false;
 
         do
         {
@@ -138,46 +209,41 @@ namespace thetvdb_api
             {
                 if (season == INFINITE || season == episode["airedSeason"])
                 {
-                    returnValue.push_back(Episode(episode));
+                    bEpisodeFound = true;
                 }
+
+                returnValue.push_back(Episode(episode));
             }
         }
         // The api return episodes by slices of 100, and I want to get all of them
         while (returnValue.size() % 100 == 0);
 
-        return returnValue;
+        if (bEpisodeFound)
+        {
+            return returnValue;
+        }
+
+        return std::vector<Episode>();
     }
 
     nlohmann::json POST_request(nlohmann::json input, std::string const& link)
     {
         nlohmann::json anwser;
+        curlpp::Cleanup cleaner;
+        curlpp::Easy request;
 
-        try
-        {
-            curlpp::Cleanup cleaner;
-            curlpp::Easy request;
+        request.setOpt(new curlpp::options::Url(THETVDB_API_LINK + link));
 
-            request.setOpt(new curlpp::options::Url(THETVDB_API_LINK + link));
+        std::list<std::string> header;
+        header.push_back("Content-Type: application/json");
 
-            std::list<std::string> header;
-            header.push_back("Content-Type: application/json");
+        request.setOpt(new curlpp::options::HttpHeader(header));
+        request.setOpt(new curlpp::options::PostFields(input.dump()));
+        request.setOpt(new curlpp::options::PostFieldSize(input.dump().size()));
 
-            request.setOpt(new curlpp::options::HttpHeader(header));
-            request.setOpt(new curlpp::options::PostFields(input.dump()));
-            request.setOpt(new curlpp::options::PostFieldSize(input.dump().size()));
-
-            std::stringstream ss;
-            ss << request;
-            ss >> anwser;
-        }
-        catch ( curlpp::LogicError & e )
-        {
-            LOG_ERROR(e.what());
-        }
-        catch ( curlpp::RuntimeError & e )
-        {
-            LOG_ERROR(e.what());
-        }
+        std::stringstream ss;
+        ss << request;
+        ss >> anwser;
 
         return anwser;
     }
@@ -190,31 +256,20 @@ namespace thetvdb_api
         // will retry with a different acceptable language in this case
         for (auto const& language : LANGUAGES_TO_TEST)
         {
-            try
-            {
-                curlpp::Cleanup cleaner;
-                curlpp::Easy request;
+            curlpp::Cleanup cleaner;
+            curlpp::Easy request;
 
-                request.setOpt(new curlpp::options::Url(THETVDB_API_LINK + link));
+            request.setOpt(new curlpp::options::Url(THETVDB_API_LINK + link));
 
-                std::list<std::string> header;
-                header.push_back("Accept-Language: " + language);
-                header.push_back("Authorization: Bearer " + token);
+            std::list<std::string> header;
+            header.push_back("Accept-Language: " + language);
+            header.push_back("Authorization: Bearer " + token);
 
-                request.setOpt(new curlpp::options::HttpHeader(header));
+            request.setOpt(new curlpp::options::HttpHeader(header));
 
-                std::stringstream ss;
-                ss << request;
-                ss >> anwser;
-            }
-            catch ( curlpp::LogicError & e )
-            {
-                LOG_ERROR(e.what());
-            }
-            catch ( curlpp::RuntimeError & e )
-            {
-                LOG_ERROR(e.what());
-            }
+            std::stringstream ss;
+            ss << request;
+            ss >> anwser;
 
             if (anwser.find("Error") == anwser.end())
             {

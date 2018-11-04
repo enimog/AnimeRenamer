@@ -6,7 +6,7 @@ Serie::Serie(std::string const& serie_name, size_t season) : m_serieId(0)
 {
     const auto serie_candidates = thetvdb_api::getSerieNameBestMatch(serie_name);
 
-    for (auto const& candidate : serie_candidates)
+    for (auto const& [distance, candidate] : serie_candidates)
     {
         m_serieId = thetvdb_api::getSerieId(candidate);
 

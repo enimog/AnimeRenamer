@@ -6,7 +6,10 @@ Episode::Episode(nlohmann::json const& data)
     m_EpisodeId = data["id"];
     m_airedSeason = data["airedSeason"];
     m_airedEpisodeNumber = data["airedEpisodeNumber"];
-    m_episodeName = data["episodeName"];
+    if (!data["episodeName"].empty())
+    {
+        m_episodeName = data["episodeName"];
+    }
 }
 
 Episode::~Episode()

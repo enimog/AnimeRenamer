@@ -67,5 +67,19 @@ namespace Toolbox
             rtrim(ret);
             return ret;
         }
+
+        static inline std::string lowercase(std::string const& s)
+        {
+            std::string result = s;
+            std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+            return result;
+        }
+
+        static inline std::string uppercase(std::string const& s)
+        {
+            std::string result = s;
+            std::transform(result.begin(), result.end(), result.begin(), ::toupper);
+            return result;
+        }
     };
 }
