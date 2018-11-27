@@ -66,7 +66,7 @@ episode_data GetEpisodeMetadata(string const& filename)
         }
 
         // This allow to get the season and episode number when the format is SxxEyy
-        std::regex regex_season("S([[:digit:]])+E([[:digit:]])+");
+        std::regex regex_season("S([[:digit:]]{2})+E([[:digit:]]{2})+");
         if (regex_search(second_part, match, regex_season))
         {
             ret.season_number = stoi(match[1]);

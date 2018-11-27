@@ -15,6 +15,9 @@
 #include "Constants.h"
 #include "MathUtils.h"
 #include "Episode.h"
+#include "StringToolbox.h"
+
+using namespace Toolbox::StringToolbox;
 
 namespace thetvdb_api
 {
@@ -26,6 +29,7 @@ namespace thetvdb_api
     static std::string token;
     static const size_t SMALLEST_DISTANCE_ACCEPTABLE = 5;
 
+    std::multimap<int, std::string> getExistingFoldersBestMatch(std::string const& name, const size_t smallest_distance = SMALLEST_DISTANCE_ACCEPTABLE);
     nlohmann::json POST_request(nlohmann::json input, std::string const& link);
     nlohmann::json GET_request(std::string const& link);
 
@@ -96,8 +100,9 @@ namespace thetvdb_api
                 const auto begin_name = entry.find("[CDATA[") + 7;
                 const auto end_name = entry.find("]]>");
                 const auto entry_name = entry.substr(begin_name, end_name - begin_name);
+                const auto formatted_name = lowercase(trim(entry_name));
 
-                const auto distance = LevenshteinDistance(name, entry_name);
+                const auto distance = LevenshteinDistance(name, formatted_name);
                 if (SMALLEST_DISTANCE_ACCEPTABLE >= distance && distance < smallest_distance)
                 {
                     found_candidate = true;
@@ -106,6 +111,7 @@ namespace thetvdb_api
 
                 if (found_candidate && entry.find("type=\"official\"") != std::string::npos && entry.find("lang=\"en\"") != std::string::npos)
                 {
+                    result.merge(getExistingFoldersBestMatch(formatted_name, 0));
                     result.insert(std::pair<int, std::string>(smallest_distance, entry_name));
                 }
 
@@ -120,7 +126,7 @@ namespace thetvdb_api
     // Internal function
     // Used to find existing folders on the root path, and use them if possible
     // This FIX the issue where seasons would have their own names and not use the general folder
-    std::multimap<int, std::string> getExistingFoldersBestMatch(std::string const& name)
+    std::multimap<int, std::string> getExistingFoldersBestMatch(std::string const& name, const size_t smallest_distance)
     {
         std::multimap<int, std::string> result;
 
@@ -134,11 +140,12 @@ namespace thetvdb_api
             std::regex parenthesisContent("\\(([[:digit:]])+\\)?");
             std::regex_replace(candidate, parenthesisContent,"");
             candidate = trim(candidate);
+            const auto lowercase_candidate = lowercase(candidate);
 
-            const auto candidate_distance = LevenshteinDistance(name, candidate);
-            if (SMALLEST_DISTANCE_ACCEPTABLE >= candidate_distance || lowercase(name).find(lowercase(candidate)) != std::string::npos)
+            const auto candidate_distance = LevenshteinDistance(name, lowercase_candidate);
+            if (smallest_distance >= candidate_distance || name.find(lowercase_candidate) != std::string::npos)
             {
-                result.insert(std::pair<int, std::string>(-1, candidate));
+                result.insert(std::pair<int, std::string>(-SMALLEST_DISTANCE_ACCEPTABLE + candidate_distance - 1, candidate));
             }
         }
 
@@ -155,19 +162,25 @@ namespace thetvdb_api
         std::stringstream ss;
         ss << request;
 
+        bool isValidLanguage = false;
         std::string line;
         while (std::getline(ss, line))
         {
             line = trim(line);
 
             // The real name used by thetvdb query is inside the <a href>{...}</a> tag
-            if (line.find("href=\"/series/") != std::string::npos)
+            if (isValidLanguage && line.find("href=\"/series/") != std::string::npos)
             {
                 const auto begin = line.find("\">") + 2;
                 const auto end = line.find("</a>");
-                const auto candidate = line.substr(begin, end - begin);
-                result.insert(std::pair<int, std::string>(LevenshteinDistance(name, candidate), candidate));
+                const auto candidate = trim(line.substr(begin, end - begin));
+                const auto lowercase_candidate = lowercase(candidate);
+
+                result.insert(std::pair<int, std::string>(LevenshteinDistance(name, lowercase_candidate), candidate));
             }
+
+            // The language is in the line before the series. This check that the language is english
+            isValidLanguage = line.find("<td>English</td>") != std::string::npos /*|| line.find("<td>Français</td>") != std::string::npos*/;
         }
 
         result.merge(getTranslationEquivalent(name));

@@ -1,10 +1,13 @@
 #include "stdafx.h"
 #include "Serie.h"
 #include "TheTvDb_Api.h"
+#include "StringToolbox.h"
+
+using namespace Toolbox::StringToolbox;
 
 Serie::Serie(std::string const& serie_name, size_t season) : m_serieId(0)
 {
-    const auto serie_candidates = thetvdb_api::getSerieNameBestMatch(serie_name);
+    const auto serie_candidates = thetvdb_api::getSerieNameBestMatch(lowercase(trim(serie_name)));
 
     for (auto const& [distance, candidate] : serie_candidates)
     {

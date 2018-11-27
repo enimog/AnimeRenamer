@@ -177,7 +177,7 @@
 	<locale>
 	<codecvt>
 
-1541285331 /media/mog_network/Dev/AnimeRenamer/include/stdafx.h
+1543167566 /media/mog_network/Dev/AnimeRenamer/include/stdafx.h
 	<iostream>
 	<SDKDDKVer.h>
 	<windows.h>
@@ -567,7 +567,7 @@
 1541326719 /media/mog_network/Dev/AnimeRenamer/include/TheTvDb_Api.h
 	<map>
 
-1541361401 source:/media/mog_network/Dev/AnimeRenamer/src/TheTvDb_Api.cpp
+1543300903 source:/media/mog_network/Dev/AnimeRenamer/src/TheTvDb_Api.cpp
 	"stdafx.h"
 	"TheTvDb_Api.h"
 	<sstream>
@@ -582,6 +582,7 @@
 	"Constants.h"
 	"MathUtils.h"
 	"Episode.h"
+	"StringToolbox.h"
 
 1541235141 /media/mog_network/Dev/AnimeRenamer/include/whereami/whereami.h
 
@@ -616,7 +617,7 @@
 	<sys/sysctl.h>
 	<dlfcn.h>
 
-1541363948 source:/media/mog_network/Dev/AnimeRenamer/src/main.cpp
+1543298334 source:/media/mog_network/Dev/AnimeRenamer/src/main.cpp
 	<iostream>
 	<string>
 	<filesystem>
@@ -640,10 +641,11 @@
 1541364105 /media/mog_network/Dev/AnimeRenamer/include/Season.h
 	"Episode.h"
 
-1541359218 source:/media/mog_network/Dev/AnimeRenamer/src/Serie.cpp
+1543300892 source:/media/mog_network/Dev/AnimeRenamer/src/Serie.cpp
 	"stdafx.h"
 	"Serie.h"
 	"TheTvDb_Api.h"
+	"StringToolbox.h"
 
 1541321209 /media/mog_network/Dev/AnimeRenamer/include/Serie.h
 	"Season.h"

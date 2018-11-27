@@ -2,14 +2,7 @@
 // or project specific include files that are used frequently, but
 // are changed infrequently
 //
-
 #pragma once
-
-#define UNICODE
-#define _UNICODE
-
-#define _DEBUG
-
 #include <iostream>
 
 // windows stuff
@@ -21,6 +14,13 @@
 #include <limits.h>
     #define INFINITE 0xFFFFFFFF
     #define MAX_PATH PATH_MAX
+#endif
+
+#ifndef UNICODE
+    #define UNICODE
+#endif
+#ifndef _UNICODE
+    #define _UNICODE
 #endif
 
 // common std includes
