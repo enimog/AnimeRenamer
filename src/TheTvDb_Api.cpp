@@ -157,34 +157,34 @@ namespace thetvdb_api
         std::multimap<int, std::string> result;
         curlpp::Cleanup cleaner;
         curlpp::Easy request;
-        request.setOpt(new curlpp::options::Url("https://www.thetvdb.com/search?q="+curlpp::escape(name)));
 
-        std::stringstream ss;
-        ss << request;
-
-        bool isValidLanguage = false;
-        std::string line;
-        while (std::getline(ss, line))
+        for (auto const& language : LANGUAGES_TO_TEST)
         {
-            line = trim(line);
+            request.setOpt(new curlpp::options::Url("https://www.thetvdb.com/search?q="+curlpp::escape(name)+"&l="+language));
 
-            // The real name used by thetvdb query is inside the <a href>{...}</a> tag
-            if (isValidLanguage && line.find("href=\"/series/") != std::string::npos)
+            std::stringstream ss;
+            ss << request;
+
+            std::string line;
+            while (std::getline(ss, line))
             {
-                const auto begin = line.find("\">") + 2;
-                const auto end = line.find("</a>");
-                const auto candidate = trim(line.substr(begin, end - begin));
-                const auto lowercase_candidate = lowercase(candidate);
+                line = trim(line);
 
-                result.insert(std::pair<int, std::string>(LevenshteinDistance(name, lowercase_candidate), candidate));
+                // The real name used by thetvdb query is inside the <a href>{...}</a> tag
+                if (line.find("href=\"/series/") != std::string::npos)
+                {
+                    const auto begin = line.find("\">") + 2;
+                    const auto end = line.find("</a>");
+                    const auto candidate = trim(line.substr(begin, end - begin));
+                    const auto lowercase_candidate = lowercase(candidate);
+
+                    result.insert(std::pair<int, std::string>(LevenshteinDistance(name, lowercase_candidate), candidate));
+                }
             }
 
-            // The language is in the line before the series. This check that the language is english
-            isValidLanguage = line.find("<td>English</td>") != std::string::npos /*|| line.find("<td>Français</td>") != std::string::npos*/;
+            result.merge(getTranslationEquivalent(name));
+            result.merge(getExistingFoldersBestMatch(name));
         }
-
-        result.merge(getTranslationEquivalent(name));
-        result.merge(getExistingFoldersBestMatch(name));
 
         return result;
     }
