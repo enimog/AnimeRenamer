@@ -90,5 +90,10 @@ namespace File
          * Callback when a file is changed. Will notify all observers
          */
         void OnChange() const;
+
+        /*
+         * Function used to lower the reference count and unregister all callback if necessary.
+         */
+        void removeReference();
     };
 }

@@ -60,6 +60,11 @@ namespace Toolbox
             return result;
         }
 
+        std::string ToAbsolutePath( std::string const & path )
+        {
+            return WideToString(ToAbsolutePath(StringToWide(path)));
+        }
+
         std::wstring GetExtension( std::wstring const& file )
         {
             return StringToWide(std::filesystem::path(file).extension());

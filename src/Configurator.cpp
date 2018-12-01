@@ -4,12 +4,16 @@
 
 const std::unordered_map<CConfigurator::ConfigOption, std::wstring> CConfigurator::OptionToString = {
     { THETVDB_API_KEY , L"ApiKey" },
-    { THETVDB_USERNAME, L"Username" },
+    { THETVDB_USERNAME, L"Username_TheTVDB" },
     { THETVDB_USERKEY ,  L"Userkey" },
+    { ANIDB_USERNAME , L"Username_AniDB" },
+    { ANIDB_PASSWORD , L"Password" },
     { PATH_TO_COPY_ROOT , L"PathToCopyRoot" },
     { EXCLUDED_FOLDERS , L"ExcludedFolders" },
     { SEASON_DICT_LOCATION , L"seasonDictLocation" }
 };
+
+bool UsedDefaultConfig = false;
 
 CConfigurator::CConfigurator() : Config( L"config.ini" )
 {
@@ -23,7 +27,10 @@ CConfigurator::CConfigurator() : Config( L"config.ini" )
         LOG_INFO( "Using the default configuration" );
         UseDefaultConfiguration();
     }*/
-    UseDefaultConfiguration();
+    if (!UsedDefaultConfig)
+    {
+        UseDefaultConfiguration();
+    }
 }
 
 
@@ -37,8 +44,10 @@ void CConfigurator::UseDefaultConfiguration() const
 
     // Get all values
     const auto api_key = (*this)[THETVDB_API_KEY];
-    const auto username = (*this)[THETVDB_USERNAME];
+    const auto username_thetvdb = (*this)[THETVDB_USERNAME];
     const auto userkey = (*this)[THETVDB_USERKEY];
+    const auto username_anidb = (*this)[ANIDB_USERNAME];
+    const auto password = (*this)[ANIDB_PASSWORD];
     const auto copypath = (*this)[PATH_TO_COPY_ROOT];
     const auto excludedFolders = (*this)[EXCLUDED_FOLDERS];
     const auto dictLocation = (*this)[SEASON_DICT_LOCATION];
@@ -47,10 +56,15 @@ void CConfigurator::UseDefaultConfiguration() const
     Config.clear();
 
     // Set here user specific configuration
-    Config.AppendSection( L"Authentication" );
+    Config.AppendSection( L"TheTVDB Authentication" );
     Config.AppendKeyValue( L"ApiKey", api_key );
-    Config.AppendKeyValue( L"Username", username );
+    Config.AppendKeyValue( L"Username_TheTVDB", username_thetvdb );
     Config.AppendKeyValue( L"Userkey", userkey );
+    Config.AppendEmptyLine();
+
+    Config.AppendSection( L"AniDB Authentication" );
+    Config.AppendKeyValue( L"Username_AniDB", username_anidb );
+    Config.AppendKeyValue( L"Password", password );
     Config.AppendEmptyLine();
 
     Config.AppendSection( L"General" );
@@ -58,6 +72,7 @@ void CConfigurator::UseDefaultConfiguration() const
     Config.AppendKeyValue( L"ExcludedFolders", excludedFolders );
     Config.AppendKeyValue( L"seasonDictLocation", dictLocation );
 
+    UsedDefaultConfig = true;
     LOG_TRACE( "End creating the default configuration" );
 }
 

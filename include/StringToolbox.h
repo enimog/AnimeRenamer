@@ -12,11 +12,62 @@ namespace Toolbox
 
         std::string WideToString( std::wstring const& string );
 
-        std::vector<std::wstring> Split( std::wstring const& string, std::wstring const & delimiter );
-        std::vector<std::string> Split( std::string const & string, std::string const & delimiter );
-        std::vector<std::wstring> Split( std::wstring const& string, wchar_t const & delimiter );
-        std::vector<std::string> Split( std::string const& string, char const & delimiter );
-        std::wstring replace(std::wstring const& str, const std::wstring& from, const std::wstring& to);
+        template<class T>
+        std::vector<std::basic_string<T>> Split( std::basic_string<T> const & str, std::basic_string<T> const & delimiter )
+        {
+            std::vector<std::basic_string<T>> result;
+            auto temp( str );
+            size_t pos = 0;
+
+            while ((pos = temp.find( delimiter )) != std::basic_string<T>::npos)
+            {
+                result.push_back( temp.substr( 0, pos ) );
+                temp.erase( 0, pos + delimiter.length() );
+            }
+            result.push_back( temp );
+
+            return result;
+        }
+
+        template<class T>
+        std::vector<std::basic_string<T>> Split( std::basic_string<T> const & str, T const & delimiter )
+        {
+            std::vector<std::basic_string<T>> result;
+            auto temp( str );
+            size_t pos = 0;
+
+            while ((pos = temp.find( delimiter )) != std::basic_string<T>::npos)
+            {
+                result.push_back( temp.substr( 0, pos ) );
+                temp.erase( 0, pos + 1 );
+            }
+            result.push_back( temp );
+
+            return result;
+        }
+
+        template<class T>
+        std::vector<std::basic_string<T>> Split( std::basic_string<T> const & str, const T* delimiter )
+        {
+            return Split(str, std::basic_string<T>(delimiter));
+        }
+
+        template<class T>
+        std::basic_string<T> replace(std::basic_string<T> const& str, std::basic_string<T> const& from, std::basic_string<T> const& to)
+        {
+            auto strcopy = str;
+            size_t start_pos = str.find(from);
+            if(start_pos == std::basic_string<T>::npos)
+                return str;
+            strcopy.replace(start_pos, from.length(), to);
+            return strcopy;
+        }
+
+        template<class T>
+        std::basic_string<T> replace(std::basic_string<T> const& str, const T* from, const T* to)
+        {
+            return replace(str, std::basic_string<T>(from), std::basic_string<T>(to));
+        }
 
         template<typename ... Args>
         std::wstring Format( const std::wstring& format, Args ... args )
@@ -44,40 +95,46 @@ namespace Toolbox
         }
 
         // trim from start (in place)
-        static inline void ltrim(std::string &s)
+        template<class T>
+        std::basic_string<T> ltrim(std::basic_string<T> const& s)
         {
-            s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
+            std::basic_string<T> ret = s;
+            ret.erase(ret.begin(), std::find_if(ret.begin(), ret.end(), [](int ch) {
                 return !isspace(ch);
             }));
-        }
-
-        // trim from end (in place)
-        static inline void rtrim(std::string &s)
-        {
-            s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-                return !isspace(ch);
-            }).base(), s.end());
-        }
-
-        // trim from both ends (in place)
-        static inline std::string trim(std::string const &s)
-        {
-            std::string ret = s;
-            ltrim(ret);
-            rtrim(ret);
             return ret;
         }
 
-        static inline std::string lowercase(std::string const& s)
+        // trim from end (in place)
+        template<class T>
+        std::basic_string<T> rtrim(std::basic_string<T> const& s)
         {
-            std::string result = s;
+            std::basic_string<T> ret = s;
+            ret.erase(std::find_if(ret.rbegin(), ret.rend(), [](int ch) {
+                return !isspace(ch);
+            }).base(), ret.end());
+            return ret;
+        }
+
+        // trim from both ends (in place)
+        template<class T>
+        std::basic_string<T> trim(std::basic_string<T> const &s)
+        {
+            return ltrim(rtrim(s));
+        }
+
+        template<class T>
+        std::basic_string<T> lowercase(std::basic_string<T> const& s)
+        {
+            std::basic_string<T> result = s;
             std::transform(result.begin(), result.end(), result.begin(), ::tolower);
             return result;
         }
 
-        static inline std::string uppercase(std::string const& s)
+        template<class T>
+        std::basic_string<T> uppercase(std::basic_string<T> const& s)
         {
-            std::string result = s;
+            std::basic_string<T> result = s;
             std::transform(result.begin(), result.end(), result.begin(), ::toupper);
             return result;
         }

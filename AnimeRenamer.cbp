@@ -4,37 +4,28 @@
 	<Project>
 		<Option title="AnimeRenamer" />
 		<Option pch_mode="2" />
-		<Option compiler="clang" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/AnimeRenamer" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
-				<Option compiler="clang" />
+				<Option compiler="gcc" />
 				<Option parameters="/run/media/mog/Mog File Server/Downloads/[Erai-raws] Fairy Tail (2018) - 01 [1080p].mkv" />
 				<Compiler>
-					<Add option="-m64" />
 					<Add option="-g" />
-					<Add option="-Winvalid-pch" />
-					<Add option='-include &quot;stdafx.h&quot;' />
-					<Add option="-DCURL_STATICLIB" />
 				</Compiler>
 				<Linker>
-					<Add option="-m64" />
 					<Add library="lib/Debug/liblog4cplusU-2.0.so.3.3.3" />
-					<Add directory="include" />
 				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/AnimeRenamer" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
-				<Option compiler="clang" />
+				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O4" />
-					<Add option="-Winvalid-pch" />
-					<Add option='-include &quot;stdafx.h&quot;' />
-					<Add option="-DCURL_STATICLIB" />
+					<Add option="-O3" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -43,23 +34,19 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-m64" />
+			<Add option="-march=corei7-avx" />
 			<Add option="-Wall" />
-			<Add option="-g" />
-			<Add option="-std=c++14" />
-			<Add option="-Winvalid-pch" />
+			<Add option="-std=c++1z" />
 			<Add option='-include &quot;stdafx.h&quot;' />
-			<Add option="-std=c++17" />
-			<Add option="-DCURL_STATICLIB" />
 			<Add directory="include" />
 			<Add directory="lib/include" />
 		</Compiler>
 		<Linker>
-			<Add option="-m64" />
 			<Add option="-lstdc++fs" />
-			<Add library="/lib64/libcurl.so" />
-			<Add library="/lib64/libpthread.so" />
+			<Add library="/lib/libcurl.so" />
+			<Add library="/lib/libpthread.so" />
 		</Linker>
+		<Unit filename="include/AniDb_Api.h" />
 		<Unit filename="include/CObservable.h" />
 		<Unit filename="include/Configurator.h" />
 		<Unit filename="include/Constants.h" />
@@ -68,13 +55,17 @@
 		<Unit filename="include/FileToolbox.h" />
 		<Unit filename="include/FileWatcherThread.h" />
 		<Unit filename="include/FileWriterThread.h" />
+		<Unit filename="include/HashToolbox.h" />
+		<Unit filename="include/IEpisode.h" />
 		<Unit filename="include/INIFile.h" />
+		<Unit filename="include/LocalEpisode.h" />
 		<Unit filename="include/Logger.h" />
 		<Unit filename="include/MathUtils.h" />
 		<Unit filename="include/Season.h" />
 		<Unit filename="include/Serie.h" />
 		<Unit filename="include/StringToolbox.h" />
 		<Unit filename="include/TheTvDb_Api.h" />
+		<Unit filename="include/asio.hpp" />
 		<Unit filename="include/curlpp/Easy.hpp" />
 		<Unit filename="include/curlpp/Easy.inl" />
 		<Unit filename="include/curlpp/Exception.hpp" />
@@ -110,6 +101,7 @@
 		<Unit filename="include/utilspp/TypeTrait.hpp" />
 		<Unit filename="include/utilspp/clone_ptr.hpp" />
 		<Unit filename="include/whereami/whereami.h" />
+		<Unit filename="src/AniDb_Api.cpp" />
 		<Unit filename="src/CObservable.cpp" />
 		<Unit filename="src/Configurator.cpp" />
 		<Unit filename="src/Episode.cpp" />
@@ -117,12 +109,17 @@
 		<Unit filename="src/FileToolbox.cpp" />
 		<Unit filename="src/FileWatcherThread.cpp" />
 		<Unit filename="src/FileWriterThread.cpp" />
+		<Unit filename="src/HashToolbox.cpp" />
+		<Unit filename="src/IEpisode.cpp" />
 		<Unit filename="src/INIFile.cpp" />
+		<Unit filename="src/LocalEpisode.cpp" />
 		<Unit filename="src/Logger.cpp" />
+		<Unit filename="src/MathUtils.cpp" />
 		<Unit filename="src/Season.cpp" />
 		<Unit filename="src/Serie.cpp" />
 		<Unit filename="src/StringToolbox.cpp" />
 		<Unit filename="src/TheTvDb_Api.cpp" />
+		<Unit filename="src/asio/asio.cpp" />
 		<Unit filename="src/curlpp/Easy.cpp" />
 		<Unit filename="src/curlpp/Exception.cpp" />
 		<Unit filename="src/curlpp/Form.cpp" />

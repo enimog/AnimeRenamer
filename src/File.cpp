@@ -32,7 +32,7 @@ namespace File
 
     File & File::operator=( const File & other )
     {
-        File::~File();
+        removeReference();
 
         File( other.m_strPath );
 
@@ -61,21 +61,7 @@ namespace File
 
     File::~File()
     {
-        if (m_strPath.size() > 0)
-        {
-            m_FileMap[m_strPath].RefCount--;
-
-            m_FileMap[m_strPath].WatchThread->unregisterCallback( std::bind( &File::OnChange, this ) );
-
-            if (m_FileMap[m_strPath].RefCount == 0)
-            {
-                // I have to explicitely kill it before the rest because otherwise we won't be able to write
-                // properly the remaining data
-                m_FileMap[m_strPath].WriteThread.reset();
-
-                m_FileMap.erase( m_FileMap.find( m_strPath ) );
-            }
-        }
+        removeReference();
 
         LOG_TRACE(L"Destructor for file %s", m_strPath.c_str() );
     }
@@ -98,5 +84,24 @@ namespace File
     void File::OnChange() const
     {
         notify();
+    }
+
+    void File::removeReference()
+    {
+        if (m_strPath.size() > 0)
+        {
+            m_FileMap[m_strPath.c_str()].RefCount--;
+
+            m_FileMap[m_strPath.c_str()].WatchThread->unregisterCallback( std::bind( &File::OnChange, this ) );
+
+            if (m_FileMap[m_strPath.c_str()].RefCount == 0)
+            {
+                // I have to explicitely kill it before the rest because otherwise we won't be able to write
+                // properly the remaining data
+                m_FileMap[m_strPath.c_str()].WriteThread.reset();
+
+                m_FileMap.erase( m_FileMap.find( m_strPath.c_str() ) );
+            }
+        }
     }
 }

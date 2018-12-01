@@ -12,24 +12,21 @@
 #include <curlpp/Infos.hpp>
 #include <nlohmann/json.hpp>
 
-#include "Constants.h"
 #include "MathUtils.h"
 #include "Episode.h"
 #include "StringToolbox.h"
+#include "Configurator.h"
 
 using namespace Toolbox::StringToolbox;
+using namespace Utils::Math;
 
 namespace thetvdb_api
 {
-    using namespace Toolbox::StringToolbox;
-    using namespace Utils::Math;
+    const std::string THETVDB_API_LINK =  "https://api.thetvdb.com";
+    const std::vector<std::string> LANGUAGES_TO_TEST = { "en", "fr" };
+    std::string token;
+    const size_t SMALLEST_DISTANCE_ACCEPTABLE = 5;
 
-    static const std::string THETVDB_API_LINK =  "https://api.thetvdb.com";
-    static const std::vector<std::string> LANGUAGES_TO_TEST = { "en", "fr" };
-    static std::string token;
-    static const size_t SMALLEST_DISTANCE_ACCEPTABLE = 5;
-
-    std::multimap<int, std::string> getExistingFoldersBestMatch(std::string const& name, const size_t smallest_distance = SMALLEST_DISTANCE_ACCEPTABLE);
     nlohmann::json POST_request(nlohmann::json input, std::string const& link);
     nlohmann::json GET_request(std::string const& link);
 
@@ -37,6 +34,7 @@ namespace thetvdb_api
     {
         if (token.empty())
         {
+            CConfigurator config;
             nlohmann::json auth_data;
             auth_data["apikey"] = WideToString(config[CConfigurator::THETVDB_API_KEY]);
             auth_data["username"] = WideToString(config[CConfigurator::THETVDB_USERNAME]);
@@ -64,94 +62,6 @@ namespace thetvdb_api
         return false;
     }
 
-    // Internal function
-    // Used to get a EN translated name for the serie
-    // This use AniDB data dump internally
-    std::multimap<int, std::string> getTranslationEquivalent(std::string const& name)
-    {
-        std::multimap<int, std::string> result;
-        curlpp::Cleanup cleaner;
-        curlpp::Easy request;
-        std::stringstream ss;
-
-        // The AniDB url need spaces to be serialized as '+' instead of '%20'
-        auto encoded_name = curlpp::escape(name);
-        std::regex encodedspaces("\\%20?");
-        encoded_name = regex_replace(encoded_name, encodedspaces,"+");
-
-        request.setOpt(new curlpp::options::Url("http://anisearch.outrance.pl/?task=search&query="+encoded_name));
-        ss << request;
-
-        // Parse all the xml dump to find matching entries
-        std::string xml_data(ss.str());
-        while (xml_data.find("<anime") != std::string::npos)
-        {
-            bool found_candidate = false;
-            const auto begin = xml_data.find("<anime");
-            const auto end = xml_data.find("</anime>");
-            auto anime = xml_data.substr(begin, end - begin);
-            size_t smallest_distance = INFINITE;
-
-            while (anime.find("<title") != std::string::npos)
-            {
-                const auto begin = anime.find("<title");
-                const auto end = anime.find("</title>");
-                const auto entry = anime.substr(begin, end - begin);
-                const auto begin_name = entry.find("[CDATA[") + 7;
-                const auto end_name = entry.find("]]>");
-                const auto entry_name = entry.substr(begin_name, end_name - begin_name);
-                const auto formatted_name = lowercase(trim(entry_name));
-
-                const auto distance = LevenshteinDistance(name, formatted_name);
-                if (SMALLEST_DISTANCE_ACCEPTABLE >= distance && distance < smallest_distance)
-                {
-                    found_candidate = true;
-                    smallest_distance = distance;
-                }
-
-                if (found_candidate && entry.find("type=\"official\"") != std::string::npos && entry.find("lang=\"en\"") != std::string::npos)
-                {
-                    result.merge(getExistingFoldersBestMatch(formatted_name, 0));
-                    result.insert(std::pair<int, std::string>(smallest_distance, entry_name));
-                }
-
-                anime = anime.substr(end + 8);
-            }
-            xml_data = xml_data.substr(end + 8);
-        }
-
-        return result;
-    }
-
-    // Internal function
-    // Used to find existing folders on the root path, and use them if possible
-    // This FIX the issue where seasons would have their own names and not use the general folder
-    std::multimap<int, std::string> getExistingFoldersBestMatch(std::string const& name, const size_t smallest_distance)
-    {
-        std::multimap<int, std::string> result;
-
-        const auto rootPath = WideToString(config[CConfigurator::PATH_TO_COPY_ROOT]);
-
-        for (auto const& directory : std::filesystem::directory_iterator(rootPath))
-        {
-            auto candidate = directory.path().filename().string();
-
-            // In case there are (xxxx) specifying the year, I have to remove them for the search
-            std::regex parenthesisContent("\\(([[:digit:]])+\\)?");
-            std::regex_replace(candidate, parenthesisContent,"");
-            candidate = trim(candidate);
-            const auto lowercase_candidate = lowercase(candidate);
-
-            const auto candidate_distance = LevenshteinDistance(name, lowercase_candidate);
-            if (smallest_distance >= candidate_distance || name.find(lowercase_candidate) != std::string::npos)
-            {
-                result.insert(std::pair<int, std::string>(-SMALLEST_DISTANCE_ACCEPTABLE + candidate_distance - 1, candidate));
-            }
-        }
-
-        return result;
-    }
-
     std::multimap<int, std::string> getSerieNameBestMatch(std::string const& name)
     {
         std::multimap<int, std::string> result;
@@ -176,14 +86,14 @@ namespace thetvdb_api
                     const auto begin = line.find("\">") + 2;
                     const auto end = line.find("</a>");
                     const auto candidate = trim(line.substr(begin, end - begin));
-                    const auto lowercase_candidate = lowercase(candidate);
+                    const auto distance = LevenshteinDistance(name, lowercase(candidate));
 
-                    result.insert(std::pair<int, std::string>(LevenshteinDistance(name, lowercase_candidate), candidate));
+                    if (SMALLEST_DISTANCE_ACCEPTABLE >= distance)
+                    {
+                        result.insert(std::pair<int, std::string>(distance, candidate));
+                    }
                 }
             }
-
-            result.merge(getTranslationEquivalent(name));
-            result.merge(getExistingFoldersBestMatch(name));
         }
 
         return result;
@@ -206,23 +116,39 @@ namespace thetvdb_api
         std::vector<Episode> returnValue;
         size_t page = 0;
         bool bEpisodeFound = false;
+        int nbEpisode = 0;
 
         do
         {
             page++;
 
-            const auto json_data = GET_request("/series/" + std::to_string(id) + "/episodes?page=" + std::to_string(page));
+            auto json_data = GET_request("/series/" + std::to_string(id) + "/episodes?page=" + std::to_string(page));
 
             if (json_data.find("data") == json_data.end())
             {
                 return returnValue;
             }
 
-            for (const auto& episode : json_data["data"])
+            for (auto& episode : json_data["data"])
             {
                 if (season == INFINITE || season == episode["airedSeason"])
                 {
                     bEpisodeFound = true;
+                }
+
+                // the absolute episode number is required. Not sure what is the correct values, so...
+                // this code will exclude all 'specials' episodes and only count normal episodes.
+                if (episode["airedSeason"] != 0)
+                {
+                    nbEpisode++;
+                    if (episode.find("absoluteNumber") == episode.end())
+                    {
+                        episode["absoluteNumber"] = nbEpisode;
+                    }
+                }
+                else if (episode.find("absoluteNumber") == episode.end())
+                {
+                    episode["absoluteNumber"] = 0;
                 }
 
                 returnValue.push_back(Episode(episode));

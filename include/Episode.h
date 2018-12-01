@@ -1,8 +1,9 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
+#include "IEpisode.h"
 
-class Episode
+class Episode final : public IEpisode
 {
 public:
     /*
@@ -10,15 +11,10 @@ public:
      * This class represent a TV serie's episode
      */
     Episode(nlohmann::json const& data);
-    ~Episode();
 
-    size_t getAiredSeason() const;
-    size_t getAiredEpisodeNumber() const;
-    std::string getName() const;
-
-private:
-    size_t m_EpisodeId;
-    size_t m_airedSeason;
-    size_t m_airedEpisodeNumber;
-    std::string m_episodeName;
+    size_t getAiredSeason() const override;
+    size_t getAiredEpisodeNumber() const override;
+    std::string getName() const override;
+    size_t getEpisodeId() const override;
+    std::string getAiredDate() const override;
 };

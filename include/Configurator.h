@@ -15,6 +15,10 @@ public:
         THETVDB_USERNAME,
         THETVDB_USERKEY,
 
+        // AniDB authentication
+        ANIDB_USERNAME,
+        ANIDB_PASSWORD,
+
         // Filesystem informations
         PATH_TO_COPY_ROOT,
         EXCLUDED_FOLDERS,

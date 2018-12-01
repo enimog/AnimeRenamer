@@ -3,18 +3,14 @@
 
 Episode::Episode(nlohmann::json const& data)
 {
-    m_EpisodeId = data["id"];
+    m_EpisodeId = data["absoluteNumber"];
     m_airedSeason = data["airedSeason"];
     m_airedEpisodeNumber = data["airedEpisodeNumber"];
     if (!data["episodeName"].empty())
     {
         m_episodeName = data["episodeName"];
     }
-}
-
-Episode::~Episode()
-{
-
+    m_airedDate = data["firstAired"];
 }
 
 size_t Episode::getAiredSeason() const
@@ -30,4 +26,14 @@ size_t Episode::getAiredEpisodeNumber() const
 std::string Episode::getName() const
 {
     return m_episodeName;
+}
+
+size_t Episode::getEpisodeId() const
+{
+    return m_EpisodeId;
+}
+
+std::string Episode::getAiredDate() const
+{
+    return m_airedDate;
 }
